@@ -1,0 +1,1 @@
+SUBDIRS = thirdparty core plugins

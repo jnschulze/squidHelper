@@ -1,0 +1,6 @@
+aclocal
+autoheader
+libtoolize
+automake --add-missing --copy --foreign
+autoconf
+
