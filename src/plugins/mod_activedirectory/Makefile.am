@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = mod_activedirectory.la
+pkglib_LTLIBRARIES = mod_activedirectory.la
 mod_activedirectory_la_SOURCES = webcontrol_activedirectory.c
 mod_activedirectory_la_CFLAGS = -I$(top_builddir)/src
 mod_activedirectory_la_LDFLAGS = -module -export-dynamic -avoid-version -no-undefined

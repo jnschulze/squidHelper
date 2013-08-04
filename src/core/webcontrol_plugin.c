@@ -63,7 +63,8 @@ plugin* plugin_load(const char* name, webcontrol_core_ctx* webcontrol)
 	void (*init_func)(void*);
 	char* error;
 
-	buffer* filename = buffer_init_string("/usr/local/lib/mod_");
+	buffer* filename = buffer_init_string(MODULE_DIR);
+	buffer_append_string(filename, "/mod_");
 	buffer_append_string(filename, name);
 	buffer_append_string(filename, ".so");
 

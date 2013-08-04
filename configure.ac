@@ -11,6 +11,34 @@ AM_INIT_AUTOMAKE([])
 #AC_CONFIG_FILES([Makefile])
 AC_OUTPUT(Makefile src/Makefile src/core/Makefile src/thirdparty/Makefile src/thirdparty/c-pthread-queue/Makefile src/plugins/Makefile src/plugins/mod_activedirectory/Makefile src/plugins/mod_memcached/Makefile src/plugins/mod_txtfile/Makefile)
 
+AC_DEFUN([AC_DEFINE_DIR], [
+  test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+  test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
+  ac_define_dir=`eval echo [$]$2`
+  ac_define_dir=`eval echo [$]ac_define_dir`
+  $1="$ac_define_dir"
+  AC_SUBST($1)
+  ifelse($3, ,
+    AC_DEFINE_UNQUOTED($1, "$ac_define_dir"),
+    AC_DEFINE_UNQUOTED($1, "$ac_define_dir", $3))
+])
+
+AC_DEFUN([AC_SUBST_DIR], [
+    ifelse($2,,,$1="[$]$2")
+    result="***"
+    prior="A"
+    while test "$prior" != "$result" ; do
+        prior=`(echo "[$]$1")`
+        $1=`(
+        test "x$prefix" = xNONE && prefix="$ac_default_prefix"
+        test "x$exec_prefix" = xNONE && exec_prefix="${prefix}"
+        eval echo \""[$]$1"\"
+        )`
+        result=`(echo "[$]$1")`
+    done
+    AC_SUBST($1)
+])
+
 dnl libtool
 AC_DISABLE_STATIC
 AC_ENABLE_SHARED
@@ -49,7 +77,18 @@ dnl Checks for library functions.
 #AC_FUNC_STRFTIME
 AC_CHECK_FUNCS([inet_pton])
 
+pkglibdir='$(libdir)/$(PACKAGE)'
+AC_ARG_WITH(
+  [pkglibdir],
+  [AC_HELP_STRING(
+    [--with-pkglibdir=DIR],
+    [path to plugins installation directory [default=$(libdir)/foo]]
+  )],
+  [pkglibdir=$withval]
+)
 
+AC_SUBST(pkglibdir)
+AC_DEFINE_DIR(MODULE_DIR, pkglibdir, [Prefix where modules are installed.])
 
 dnl Check for modules
 
@@ -64,10 +103,10 @@ AC_SUBST(moduledirs)
 #AC_SUBST(modulemakefiles)
 for a in $modules
 do
-	moduledir="mod_${a}"
+	md="mod_${a}"
 
-	moduledirs="$moduledirs ${moduledir}"
-	#modulemakefiles="$modulemakefiles src/plugins/${moduledir}/Makefile"
+	moduledirs="$moduledirs ${md}"
+	#modulemakefiles="$modulemakefiles src/plugins/${md}/Makefile"
 done
 
 export moduledirs
